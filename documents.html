@@ -1,0 +1,132 @@
+
+<html>
+    <head>
+        <title>Document Add</title>
+        
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+       
+        <script>
+                
+                
+                $(document).ready(function() {
+                       
+                        $.get("documents.php",{},
+                        function(data,status){
+                            $("#maindiv").html(data);
+                        })    
+                });
+
+                
+                $(document).ready(function() {
+                    $(document).on('click', '.delete-btn', function() {
+                        var id_value = $(this).data('id');
+                        if (confirm("Are you sure you want to delete this document?")) {
+                        $.post("DeleteDocument.php",{id:id_value},
+                       function(data,status){
+                        window.location.href = "documents.html";
+                       })    
+                    }
+                });
+               });
+
+
+            //    $(document).ready(function() {
+            //         $(document).on('click', '.edit-btn', function() {
+            //             window.location.href = "updateDocument.html";
+            //            })    
+                    
+            //     });
+
+                $(document).ready(function() {
+                    $(document).on('click', '.edit-btn', function() {
+                        var id = $(this).data('id');
+                        var prev_author = $(this).data('author');
+                        var prev_title = $(this).data('title');
+                        var prev_type = $(this).data('type');
+                        var prev_format = $(this).data('format');
+                        var prev_nrOfPages = $(this).data('nr-of-pages');
+                        
+                        console.log(prev_author);
+                        var url = "updateDocument.html" +
+                  "?id=" + encodeURIComponent(id) +
+                  "&author=" + encodeURIComponent(prev_author) +
+                  "&title=" + encodeURIComponent(prev_title) +
+                  "&type=" + encodeURIComponent(prev_type) +
+                  "&format=" + encodeURIComponent(prev_format) +
+                  "&nrOfPages=" + encodeURIComponent(prev_nrOfPages);
+                  window.location.href = url;
+                        //window.location.href = "updateDocument.html?id=" + id;
+                    });
+                });
+
+
+
+                
+                var prevDocumentFormat = '';
+                var prevDocumentType = '';
+                $(document).ready(function() {
+                    
+                    $(document).on('click', '#filtebtn', function() {
+                        var documentFormat = $('#documentFormat').val();
+                        var documentType = $('#documentType').val();
+                        var label = 'Operatia anterioara: lista documentelor';
+                        if (prevDocumentFormat != '') {
+                            label += ' cu formatul ' + prevDocumentFormat;
+                        }
+                        if (prevDocumentType != '') {
+                            label += ' de tipul ' + prevDocumentType;
+                        }
+                        label += ':';
+                        $('h1').text(label);
+                        prevDocumentFormat = documentFormat;
+                        prevDocumentType = documentType;
+                        $.post("documents.php",{ documentFormat: documentFormat, documentType: documentType },
+                       function(data,status){
+                        
+                        $("#maindiv").html(data);;
+                       })    
+
+                    });
+                });
+
+
+        </script>
+        
+
+        <style>
+            
+            label {
+                    display: inline-block;
+                    width: 100px;
+                    text-align: right;
+                    }
+          </style>
+        
+    </head>
+
+    <body style="background-color: #E6E6FA; color: #708090;">
+        
+        <nav style="text-align: center;">
+            <a style="margin:20px" href="#">Browse Document</a>
+            <a style="margin:20px" href="addDocument.html">Add Document</a>
+        </nav>
+            <br>
+            <br>
+            <h1 style="text-align: center;">Lista documentelor:</h1> 
+            <br>
+
+            <div style="text-align: center;">
+                <label for="documentType">Type:</label>
+                <input type="text" id="documentType" name="documentType"><br><br>
+                <label for="documentFormat">Fromat:</label>
+                <input type="text" id="documentFormat" name="documentFormat"><br><br>
+                <button type="button" id="filtebtn">Filter</button>
+            </div>
+
+            <br>
+            <div style="display: flex; justify-content: center; ">
+                <div id="maindiv"></div>
+            </div>
+      
+    </body>
+</html>
